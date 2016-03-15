@@ -1,0 +1,1632 @@
+
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="/Assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+    <script>
+        var user = new Object();
+        $(document).before(function () {
+
+            if(true!="false") user={"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""};
+        });
+    </script>
+    <script>
+        $(document).ready(function(){
+                
+                
+            $('#username').html(user.Username);
+            if(user.Photo.trim()!="") $(".userImg").attr("src","/UserData/UserProfileImages/"+user.Photo);
+            else user.Photo="user.png";
+            $('.uploadProfileMain').mouseenter(function(){
+                //$('.uploadProfile').fadein(700);
+                //$('.uploadProfile').css('opacity',1);
+                    
+                $('.uploadProfile').animate({opacity:1},  500);
+            });
+            $('.uploadProfileMain').mouseleave(function(){
+                //$('.uploadProfile').css('opacity',0);                   
+                $('.uploadProfile').animate({opacity:0},  500);
+            });
+        });
+
+
+
+
+        function updateSession(fn) {
+            var tempUser=({"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""});
+            tempUser.Photo=fn;
+            $.ajax({
+                type: "POST",
+                url: "/SessionHandler/UpdateSession.ashx",
+                data: {'st': JSON.stringify(tempUser)},
+                success: function (data) {
+                        
+                },
+                error: function (result) {
+                    toastr("Not Successful, Please try again");
+                }
+            });
+        }
+        function showimagepreview(input, imageView) 
+        {
+                
+            var path = input.value;
+            var result = "", pathe = "";
+            for (var i = path.length - 1; i >= 0; i--) {
+                if (path.charCodeAt(i) == 46)
+                    break;
+
+                result = path.charAt(i) + result;
+            }
+            if (result.toLowerCase() == "jpg" || result.toLowerCase() == "jpeg" ||  result.toLowerCase() == "png") {
+                pathe = result.toLowerCase();
+
+                if (input.files[0].size < 2097152) {
+
+
+                    if (input.files && input.files[0]) {
+                            
+                        $.ajax({
+                            type: "POST",
+                            contentType: "application/json; charset=utf-8",
+                            url: "/api/LoginApi/updatePhoto/"+({"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""}).Username+"."+pathe+"/"+({"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""}).LId,
+                            data: '{}',
+                            success: function (data) {
+                      
+                                if(data.Result==1)
+                                {
+                                    uploadToServer(({"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""}).Username+"."+pathe);
+                           
+                                        updateSession(({"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""}).Username+"."+pathe);
+                                    }
+                                    else
+                                        toastr.error(data.Message, "Error");
+                    
+                    
+                                },
+                            error: function (result) {
+                                toastr.error("Not Successful, Please try again", "Error");
+                            }
+                        });
+                            var filerdr = new FileReader();
+                            filerdr.onload = function (e) {
+
+                                $('.userImg').attr('src', e.target.result);
+                            }
+                            
+                            filerdr.readAsDataURL(input.files[0]);
+                        }
+
+
+
+
+                    }
+                    else {
+                        input.value = '';
+                        toastr.error('File is too big(max 2mb)', "Error");
+                        imageView.attr('src', "/Assets/images/"+user.Photo);
+                        pathe = "";
+                    }
+                }
+
+                else {
+                    input.value = '';
+                    toastr.error('only .jpg,.png,.jpeg allowed', "Error");
+                    imageView.attr('src', "/Assets/images/"+user.Photo);
+                    pathe = "";
+                }
+
+
+            }
+            function changePassword(obj)
+            {
+                if($(obj).data("status")=="next")
+                    checkPass(obj);
+                if($(obj).data("status")=="save")
+                    updatePass(obj);
+            }
+            function checkPass(obj)
+            {
+                var dt=new Object();
+                dt.Username=({"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""}).Username;
+               
+    dt.Password = ($('#oldpwd').val().trim());
+    dt.DeviceType = 'w';
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "/api/LoginApi/checkPassword",
+        data: JSON.stringify(dt),
+        dataType: "json",
+        success: function (data) {
+                      
+            if(data.Result==0)
+            {
+                $(obj).data("status","save");
+                $('#oldpwdDiv').hide('slide', { direction: 'right' }, 1000);
+                $('#newpwdDiv').show('slide', { direction: 'right' }, 1000);
+                $("#saveChange").val("Save");
+            }
+            else
+                toastr.error(data.Message, "Error");
+                    
+                    
+        },
+        error: function (result) {
+            toastr.error("Not Successful, Please try again", "Error");
+        }
+    });
+
+}
+        
+
+function reset()
+{
+                            
+    $('#newpwd').val('');
+    $('#confirmpwd').val('');
+    $('#oldpwd').val('');
+    $('#oldpwdDiv').show();
+    $('#newpwdDiv').hide();
+    $("#saveChange").val("Next");
+                            
+    $("#saveChange").data("status","next");
+}
+
+
+
+
+function uploadToServer(fn) {
+    var fileUpload = $("#fileProfile").get(0);
+
+    var files = fileUpload.files;
+    var test = new FormData();
+
+    for (var i = 0; i < files.length; i++) {
+        test.append(files[i].name, files[i]);
+    }
+
+    $.ajax({
+        url: "/FileUploadHandler/UserProfilePhotoUploadHandler.ashx?fn=" + fn,
+        type: "POST",
+        contentType: false,
+        processData: false,
+        data: test,
+
+        // dataType: "json",
+        success: function (result) {
+                                    
+            toastr.success("Photo Changed Successfully", "success");
+        },
+        error: function (err) {
+
+            toastr.error("Photo uploading failed", "error");
+        }
+    });
+            
+}
+
+
+function updatePass(obj)
+{
+
+    var dt=new Object();
+    dt.Username=({"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""}).Username;
+               
+      dt.Password = ($('#oldpwd').val().trim());
+      dt.DeviceType = 'w';
+      var pass="";
+      pass=($('#newpwd').val().trim());
+      if(pass==($('#confirmpwd').val().trim()))
+      {
+          $.ajax({
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              url: "/api/LoginApi/updatePassword/"+pass+"/"+({"LId":49,"Username":"trainer","LRole":"TRAINER","Password":"n","LLastLogin":"/Date(1457786700000)/","LLastLoginS":"12 March 2016","LEmail":"ewfewfewfwef@wfefew.lll","LMobile":"5675675678","LPasswordStatus":"f","DeviceType":"w","Photo":""}).LId,
+                       data: JSON.stringify(dt),
+                       dataType: "json",
+                       success: function (data) {
+                      
+                           if(data.Result==1)
+                           {
+                               $(obj).data("status","next");
+                               toastr.success(data.Message, "Success");
+                               $('#changePassword').modal('hide');
+                               $('#afterPC').modal('show');
+                               reset();
+                           }
+                           else
+                               toastr.error(data.Message, "Error");
+                    
+                    
+                       },
+                       error: function (result) {
+                           toastr.error("Not Successful, Please try again", "Error");
+                       }
+                   });
+               }
+               else
+               {
+              
+                   toastr.error("Password mismatched, please try again", "Error");
+               }
+
+
+           }
+    </script>
+
+    <meta charset="utf-8" /><title>
+	Upskill
+</title><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta content="width=device-width, initial-scale=1" name="viewport" /><meta name="description" /><meta name="author" />
+
+
+    <style>
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn-file input[type=file] {
+                position: absolute;
+                top: 0;
+                right: 0;
+                min-width: 100%;
+                min-height: 100%;
+                font-size: 100px;
+                text-align: right;
+                filter: alpha(opacity=0);
+                opacity: 0;
+                outline: none;
+                background: white;
+                cursor: inherit;
+                display: block;
+            }
+    </style>
+
+    <link href="/Assets/global/plugins/gritter/css/jquery.gritter.css" rel="stylesheet" type="text/css" />
+
+    <!-- Form Validations-->
+    <link rel="stylesheet" type="text/css" href="/Assets/global/plugins/select2/select2.css" /><link rel="stylesheet" type="text/css" href="/Assets/global/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css" /><link rel="stylesheet" type="text/css" href="/Assets/global/plugins/bootstrap-markdown/css/bootstrap-markdown.min.css" /><link rel="stylesheet" type="text/css" href="/Assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" />
+    <!--Form Validations-->
+
+    <link href="/Assets/DeveloperJS/select2.css" rel="stylesheet" /><link href="/Assets/DeveloperJS/plugins.css" rel="stylesheet" />
+
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <link href="/Assets/global/plugins/bootstrap-toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL PLUGINS -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&amp;subset=all" rel="stylesheet" type="text/css" /><link href="/Assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" /><link href="/Assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" /><link href="/Assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" /><link rel="stylesheet" type="text/css" href="/Assets/global/plugins/jquery-multi-select/css/multi-select.css" /><link href="/Assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" /><link href="/Assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- BEGIN PAGE LEVEL PLUGIN STYLES -->
+    <link href="/Assets/global/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" /><link href="/Assets/global/plugins/jqvmap/jqvmap/jqvmap.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL PLUGIN STYLES -->
+    <!-- BEGIN PAGE STYLES -->
+    <link href="/Assets/admin/pages/css/tasks.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE STYLES -->
+    <!-- BEGIN THEME STYLES -->
+    <link rel="stylesheet" type="text/css" href="/Assets/global/plugins/select2/select2.css" /><link id="style_components" href="/Assets/global/css/components.css" rel="stylesheet" type="text/css" /><link href="/Assets/global/css/plugins.css" rel="stylesheet" type="text/css" /><link href="/Assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css" /><link id="style_color" href="/Assets/admin/layout/css/themes/darkblue.css" rel="stylesheet" type="text/css" /><link href="/Assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css" />
+    <!-- END THEME STYLES -->
+
+    <!-- BEGIN PAGE LEVEL STYLES -->
+
+    <link rel="stylesheet" type="text/css" href="/Assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css" />
+    <!-- END PAGE LEVEL STYLES -->
+
+    <!-- BEGIN PLUGINS USED BY X-EDITABLE -->
+
+    <link rel="stylesheet" type="text/css" href="/Assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css" />
+
+    <!-- END PLUGINS USED BY X-EDITABLE -->
+    <link href="/Assets/DeveloperJS/dropzone.css" rel="stylesheet" /><link href="/Assets/DeveloperJS/styleSheetNew.css" rel="stylesheet" /><link rel="shortcut icon" href="../favicon.ico" />
+     
+     <link href="/Assets/DeveloperJS/styleSheetNew.css" rel="stylesheet" />
+     <link href="/Assets/DeveloperJS/flipcss.css" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="/Assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css"/>
+    <link href="/Assets/DeveloperJS/FullCalendar/fullcalendar.css" rel="stylesheet" />
+    <link href="/Assets/DeveloperJS/FullCalendar/fullcalendar.print.css" rel="stylesheet" media='print' />
+
+    <script src="/Assets/DeveloperJS/FullCalendar/lib/moment.min.js"></script>
+    <script src="/Assets/DeveloperJS/FullCalendar/lib/jquery.min.js"></script>
+    <script src="/Assets/DeveloperJS/FullCalendar/lib/jquery-ui.custom.min.js"></script>
+    <script src="/Assets/DeveloperJS/FullCalendar/fullcalendar.min.js"></script>
+
+    <style>
+    #external-events {
+		float: left;
+		/*width: 150px;*/
+		padding: 10px 10px;
+		border: 1px solid #ccc;
+		background: #eee;
+		text-align: left;
+        margin-bottom: 20px;
+	}
+		
+	#external-events h4 {
+		font-size: 16px;
+		margin-top: 0;
+		padding-top: 1em;
+	}
+		
+	#external-events .fc-event {
+		margin: 10px 0;
+		cursor: pointer;
+	}
+		
+	#external-events p {
+		margin: 1.5em 0;
+		font-size: 11px;
+		color: #666;
+	}
+		
+	#external-events p input {
+		margin: 0;
+		vertical-align: middle;
+	}
+
+	#calendar {
+		float: left;
+		/*width: 900px;*/
+	}
+
+</style>
+
+</head>
+<body class="page-header-fixed page-quick-sidebar-over-content page-sidebar-closed-hide-logo page-container-bg-solid page-sidebar-fixed">
+    <form method="post" action="./TrainerDashboard.aspx" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="p+baUnm3fszR+HvVCOybxXBdf8yNRP3L4rz1QuCTswA9L6hmGxXMfyVcR8ide6Y/fNWsaB/PPL3d9RcUOWXW+CWuHy9uJqMHOlAoDOwsv9g=" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZN_8byrmFyDF0OKjZdHL6sTu2zTvER6XeZwqjORw-dWHs-yjRKpSol1pLGHKEIzBRQ2&amp;t=635918965619348548" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=D9drwtSJ4hBA6O8UhT6CQorDazoEvRCPPtPeUFx-Lwok0Kat2VnpsXswxqE7vX9LYG1TG3qb4IulB5b7rHabTKlJXM6hPTh3t2VVTK26l10WQrvno9WAd_l__fn37vmJZjVWTnJWmeeHO4k3vYJuxtVrUopnzsq-glGEjq0w12c1&amp;t=40eb3b32" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+//]]>
+</script>
+
+<script src="/ScriptResource.axd?d=JnUc-DEDOM5KzzVKtsL1taRr2ZhfOd5Pk6bM3FwxHS1M14kD34dBN7tosTg16WOgOghbaQ0g34GewfQVXOChttN5hrHOPOAyX6Lcnom8wAfZTWQIJypevnBOPIwLfwvjNPxz1v4al2JztlnSpWTolNxSVAi2jyTn4Z2KwurCIthoaoQFxDPIYY78t2-QT2k30&amp;t=40eb3b32" type="text/javascript"></script>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ctl00$ScriptManager1', 'form1', [], [], [], 90, 'ctl00$ctl00');
+//]]>
+</script>
+
+        <!-- BEGIN HEADER -->
+        <div class="page-header navbar navbar-fixed-top">
+            <div class="page-header-inner">
+                <!-- BEGIN LOGO -->
+                <div class="page-logo">
+                    <a href="#">
+                        <!--<img src="/Assets/admin/layout/img/logo.png" alt="logo" class="logo-default" />-->
+                        <h4 style="padding-top: 5px;"><span style="color: #ffffff; font-weight: bold;">UPSKILL</span><span style="color: red;"></span></h4>
+                    </a>
+                    <div class="menu-toggler sidebar-toggler hide">
+                    </div>
+                </div>
+                <!-- END LOGO -->
+                <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+                <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"></a>
+
+                <div class="top-menu">
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="dropdown dropdown-extended dropdown-notification" id="header_notification_bar">
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                <i class="icon-bell"></i>
+                                <span class="badge badge-default">7 </span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="external">
+                                    <h3><span class="bold">12 pending</span> notifications</h3>
+                                    <a href="extra_profile.html">view all</a>
+                                </li>
+                                <li>
+                                    <ul class="dropdown-menu-list scroller" style="height: 250px;" data-handle-color="#637283">
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">just now</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-success">
+                                                        <i class="fa fa-plus"></i>
+                                                    </span>
+                                                    New user registered. </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">3 mins</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-danger">
+                                                        <i class="fa fa-bolt"></i>
+                                                    </span>
+                                                    Server #12 overloaded. </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">10 mins</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-warning">
+                                                        <i class="fa fa-bell-o"></i>
+                                                    </span>
+                                                    Server #2 not responding. </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">14 hrs</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-info">
+                                                        <i class="fa fa-bullhorn"></i>
+                                                    </span>
+                                                    Application error. </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">2 days</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-danger">
+                                                        <i class="fa fa-bolt"></i>
+                                                    </span>
+                                                    Database overloaded 68%. </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">3 days</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-danger">
+                                                        <i class="fa fa-bolt"></i>
+                                                    </span>
+                                                    A user IP blocked. </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">4 days</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-warning">
+                                                        <i class="fa fa-bell-o"></i>
+                                                    </span>
+                                                    Storage Server #4 not responding dfdfdfd. </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">5 days</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-info">
+                                                        <i class="fa fa-bullhorn"></i>
+                                                    </span>
+                                                    System Error. </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;">
+                                                <span class="time">9 days</span>
+                                                <span class="details">
+                                                    <span class="label label-sm label-icon label-danger">
+                                                        <i class="fa fa-bolt"></i>
+                                                    </span>
+                                                    Storage server failed. </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- BEGIN USER LOGIN DROPDOWN -->
+
+                        <li class="dropdown dropdown-user">
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                <img alt="" class="img-circle userImg" src="/Assets/images/user.png" />
+                                <span class="username username-hide-on-mobile" id="username"></span>
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-default">
+                                <li>
+                                    <a href="#myProfilesm" data-toggle="modal">
+                                        <i class="icon-user"></i>My Profile 
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="#changePassword" onclick="reset();" data-toggle="modal">
+                                        <i class="icon-settings"></i>Password 
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="#changeprofileImage" data-toggle="modal">
+                                        <i class="icon-user"></i>Profile Image 
+                                    </a>
+                                </li>
+
+                                <li class="divider"></li>
+                                <li>
+                                     <a id="LinkButton2" href="javascript:__doPostBack(&#39;ctl00$ctl00$LinkButton2&#39;,&#39;&#39;)"><i class="icon-lock"></i>Lock Screen </a>
+                                  
+                                </li>
+                                <li>
+                                    <a id="LinkButton1" href="javascript:__doPostBack(&#39;ctl00$ctl00$LinkButton1&#39;,&#39;&#39;)"><i class="icon-key"></i>Log Out </a>
+
+                                </li>
+
+                            </ul>
+
+
+                        </li>
+                        <!-- END USER LOGIN DROPDOWN -->
+                    </ul>
+                </div>
+                <!-- END TOP NAVIGATION MENU -->
+            </div>
+            <!-- END HEADER INNER -->
+        </div>
+        <!-- END HEADER -->
+        <div class="clearfix">
+        </div>
+
+        <!-----------------------My Profile Modal start---------------->
+         <div class="modal fade blackbackground" id="myProfilesm" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">                  
+                    <div class="modal-body">
+                        
+                                <div class="destacadosUpper">
+                                    <div class="row destacados">  
+							            <div class="col-md-12">
+								            <div class="box1mp">
+									            <img src="/Assets/images/user.png" class="img-circle img-thumbnail" />
+										             <br /> <br />							
+								                <h3>Hemraj</h3>
+								                <h4> Role : Web Designer </h4>
+                                                <h4> Username : Web Designer </h4>
+                                                <h4> Email : xyz@gmail.com </h4>
+                                                <h4> Mobile : 9098969895 </h4>
+                                                <h4> Registration Date :21/02/2016</h4>
+								            </div>
+							            </div>
+						            </div>
+                                </div>
+                            
+                    </div>
+                </div>
+            </div>
+         </div>   
+        <!-----------------------My Profile Modal End---------------->
+
+        <!------------------change password modal start---------------->
+        <div class="modal fade changePasswordModal" id="changePassword" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header greenHeader">
+                        <button type="button" id="btnSubmit" class="close" data-dismiss="modal" onclick="EmptyTd(['tname','Tcenter','aaddress','tqualification','Tgender','tjoining ','tdob ','tpancard','temail','tmobile','tusername','tpassword']);$('#tstatus').prop('checked',true); $('#tusername').prop('disabled', false);$('#tpassword').prop('disabled', false);" aria-hidden="true"></button>
+                        <h4 class="modal-title textShadowHeading">Change Password</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="portlet marginBottom0 paddingBottom0 light">
+                            <div class="portlet-body form">
+
+
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="changepwdDiv">
+                                                <div class="profileimg">
+                                                    <img class="userImg" src="/Assets/images/user.png" />
+                                                </div>
+                                                <div class="clearfix" style="height: 20px;"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="changepwdDiv" id="oldpwdDiv">
+                                                <div class="inputFieldDivNew">
+                                                    <div class="form-group form-md-line-input has-success">
+                                                        <div class="input-icon">
+                                                            <input type="password" id="oldpwd" maxlength="20" class="form-control" placeholder="Old Password" />
+                                                            <label for="form_control_1" class="brownColor">Old Password</label>
+                                                            <span class="help-block">Regular input</span>
+                                                            <i class="fa fa-user-secret"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="changepwdDiv" id="newpwdDiv" style="display: none;">
+                                                <div class="inputFieldDivNew">
+                                                    <div class="form-group form-md-line-input has-success">
+                                                        <div class="input-icon">
+                                                            <input type="password" id="newpwd" maxlength="20" class="form-control" placeholder="New Password" />
+                                                            <label for="form_control_1" class="brownColor">New Password</label>
+                                                            <span class="help-block">Regular input</span>
+                                                            <i class="fa fa-user-secret"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="inputFieldDivNew">
+                                                    <div class="form-group form-md-line-input has-success">
+                                                        <div class="input-icon">
+                                                            <input type="password" id="confirmpwd" maxlength="20" class="form-control" placeholder="Confirm Password" />
+                                                            <label for="form_control_1" class="brownColor">Confirm Password</label>
+                                                            <span class="help-block">Regular input</span>
+                                                            <i class="fa fa-user-secret"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <input type="button" data-status="next" id="saveChange" onclick="changePassword(this);" class="btn btn-circle btn-success" value="Next" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!------------------change password modal end------------------>
+
+        <!------------------change Profile Image modal start---------------->
+        
+
+        <div class="modal fade chProfileDiv" id="changeprofileImage" tabindex="-1" role="basic" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <div class="uploadProfileMain">
+                            <img alt="" id="t20" src="/Assets/images/user.png" class="center-block userImg" />
+                            <div class="uploadProfile">
+                                <span class="btn default btn-file btn-uploadnew">
+                                    <span class="fileinput-new">Upload Image </span>
+                                    <input type="hidden" />
+                                    <input type="file" id="fileProfile" onchange="showimagepreview(this,$('#t20'));" name="spancard" />
+                                </span>
+                                <a class="closeButton">
+                                    <div id="btnSubmit1" class="close" data-dismiss="modal" aria-hidden="true">
+                                        <i class="fa fa-times" style="font-size: 20px;"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        
+        <div class="modal fade lockScreenModal" id="afterPC" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div style="width:180px;margin-left:auto;margin-right:auto;display:block;">
+                                    <input type="submit" name="ctl00$ctl00$ctl34" value="Sign Out" type="button" class="btn red-sunglo" />
+                                    <input type="button" data-dismiss="modal" class="btn green-meadow" value="Continue"/>
+                                </div>    
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!------------------change Profile Image modal end------------------>
+        <!-- BEGIN CONTAINER -->
+        <div class="page-container">
+            <!-- BEGIN SIDEBAR -->
+            <div class="page-sidebar-wrapper">
+                <div class="page-sidebar navbar-collapse collapse">
+                    <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+                        <li class="sidebar-toggler-wrapper">
+                            <div class="sidebar-toggler">
+                            </div>
+                        </li>
+
+                        
+         <li class="start">
+                            <a href="javascript:;">
+                                <i class="icon-home"></i>
+                                <span class="title">Dashboard</span>
+                                <span class="selected"></span>
+                                
+                            </a>
+                            
+                        </li>
+                     <li >
+                            <a href="/TrainerM/CalendarT.aspx">
+                                <i class="fa fa-calendar"></i>
+                                <span class="title">Calendar</span>
+                            </a>
+                            
+                        </li>
+                     <li >
+                            <a href="/TrainerM/MyBatches.aspx">
+                                <i class="fa fa-bars"></i>
+                                <span class="title">My Batches</span>
+                            </a>
+                            
+                        </li>
+                     <li >
+                            <a href="/TrainerM/CenterBatchAttendence.aspx">
+                                <i class="fa fa-calendar"></i>
+                                <span class="title">Attendance</span>
+                            </a>
+                            
+                        </li>
+                     <li >
+                            <a href="/TrainerM/StudentInBatches.aspx">
+                                <i class="fa fa-user"></i>
+                                <span class="title">Students</span>
+                            </a>
+                            
+                        </li>
+    <li >
+                            <a href="/TrainerM/TradePDFsList.aspx">
+                                <i class="fa fa-file-pdf-o"></i>
+                                <span class="title">Content PDFs</span>
+                            </a>
+                            
+                        </li>
+
+
+                    </ul>
+                </div>
+
+                
+
+         <!-- END SIDEBAR -->
+                <!-- BEGIN CONTENT -->
+                <div class="page-content-wrapper">
+                    <div class="page-content">
+                        
+    <div class="row">
+       <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+			<div class="dashboard-stat blue-madison">
+				<div class="visual">
+					<i class="fa fa-user"></i>
+				</div>
+				<div class="details">
+					<div class="number fontWeight600" id="tsc">
+					</div>
+					<div class="desc fontWeight600">
+						Total Number of Students
+					</div>
+				</div>
+				<a class="more" href="javascript:;">
+					View more <i class="m-icon-swapright m-icon-white"></i>
+				</a>
+			</div>
+		</div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+			<div class="dashboard-stat red-intense">
+				<div class="visual">
+					<i class="fa fa-bar-chart-o"></i>
+				</div>
+				<div class="details">
+					<div class="number fontWeight600" id="tbc">
+						
+					</div>
+					<div class="desc fontWeight600">
+						Total Number of Batch
+					</div>
+				</div>
+				<a class="more" href="javascript:;">
+					View more <i class="m-icon-swapright m-icon-white"></i>
+				</a>
+			</div>
+		</div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+			<div class="dashboard-stat green-haze">
+				<div class="visual">
+					<i class="fa fa-shopping-cart"></i>
+				</div>
+				<div class="details">
+					<div class="number fontWeight600" id="ttc">
+						
+					</div>
+					<div class="desc fontWeight600">
+						Total Self Assessments
+					</div>
+				</div>
+				<a class="more" href="javascript:;">
+					View more <i class="m-icon-swapright m-icon-white"></i>
+				</a>
+			</div>
+		</div>        
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row" id="blockui_sample_2_portlet_body" >
+                 <div class="col-md-12">
+                     <div class="portlet box green">                
+                        <div class="portlet-title divTitle-n">
+                             <div class="caption captionNew">
+                                <i class="fa fa-cogs"></i> Top 5 Students in Batch                  
+                              </div>          
+                         </div>
+                        <div class="portlet-body mainDiv-n">
+                            <div class="row">
+                                 <div class="col-md-1"></div>
+                                 <div class="col-md-2">
+                                    
+                                     <div class="flip-container y-theme-icon-wrapper" ontouchstart="this.classList.toggle('hover');">
+					                    <div class="flip y-theme-icon-wrapper"> 
+						                    <div class="card text-center"> 
+							                    <div class="face front">
+								                    <div class="y-theme-icon">
+									                    <img src="../UserData/StudentImages/" alt="" id="sphoto1">
+								                    </div>
+							                    </div> 
+							                    <div class="face back">
+                                                    <img src="../UserData/StudentImages/"  class="flip-backFace" alt="" id="sphoto2">
+								                    <br><p id="sname1"></p><p id="spercentage1"></p>
+							                    </div> 
+						                    </div> 
+					                    </div>										
+				                    </div>
+                                 </div>
+                                <a href=></a>
+
+                               
+
+                                <div class="col-md-2">
+                                    <div class="flip-container y-theme-icon-wrapper" ontouchstart="this.classList.toggle('hover');">
+					                    <div class="flip y-theme-icon-wrapper"> 
+						                    <div class="card text-center"> 
+							                    <div class="face front">
+								                    <div class="y-theme-icon">
+									                    <img src="../UserData/StudentImages/"  alt="" id="sphoto3">
+								                    </div>
+							                    </div> 
+							                    <div class="face back">
+                                                    <img src="../UserData/StudentImages/"  class="flip-backFace" alt="" id="sphoto4">
+								                    <br><p id="sname2"></p><p id="spercentage2"></p>
+							                    </div> 
+						                    </div> 
+					                    </div>										
+				                    </div>
+                                </div>
+
+                               
+
+                                <div class="col-md-2">
+                                   <div class="flip-container y-theme-icon-wrapper" ontouchstart="this.classList.toggle('hover');">
+					                    <div class="flip y-theme-icon-wrapper"> 
+						                    <div class="card text-center"> 
+							                    <div class="face front">
+								                    <div class="y-theme-icon">
+									                    <img src="../UserData/StudentImages/"  alt="" id="sphoto5">
+								                    </div>
+							                    </div> 
+							                    <div class="face back">
+                                                    <img src="../UserData/StudentImages/"  class="flip-backFace" alt="" id="sphoto6">
+								                    <br><p id="sname3" ></p><p id="spercentage3"></p>
+							                    </div> 
+						                    </div> 
+					                    </div>										
+				                    </div>
+                                </div>
+
+                               
+
+                                <div class="col-md-2">
+                                    <div class="flip-container y-theme-icon-wrapper" ontouchstart="this.classList.toggle('hover');">
+					                    <div class="flip y-theme-icon-wrapper"> 
+						                    <div class="card text-center"> 
+							                    <div class="face front">
+								                    <div class="y-theme-icon">
+									                    <img src="../UserData/StudentImages/"  alt="" id="sphoto7">
+								                    </div>
+							                    </div> 
+							                    <div class="face back">
+                                                    <img src="../UserData/StudentImages/"  class="flip-backFace" alt="" id="sphoto8">
+								                    <br><p id="sname4" ></p><p id="spercentage4"></p>
+							                    </div> 
+						                    </div> 
+					                    </div>										
+				                    </div>
+                                </div>
+
+                               
+
+                                <div class="col-md-2">
+                                    <div class="flip-container y-theme-icon-wrapper" ontouchstart="this.classList.toggle('hover');">
+					                    <div class="flip y-theme-icon-wrapper"> 
+						                    <div class="card text-center"> 
+							                    <div class="face front">
+								                    <div class="y-theme-icon">
+									                    <img src="../UserData/StudentImages/"  alt="" id="sphoto9">
+								                    </div>
+							                    </div> 
+							                    <div class="face back">
+                                                    <img src="../UserData/StudentImages/"  class="flip-backFace" alt="" id="sphoto10">
+								                    <br><p id="sname5" ></p><p id="spercentage5"></p>
+							                    </div> 
+						                    </div> 
+					                    </div>										
+				                    </div>
+                                </div>   
+
+                                 <div class="col-md-1"></div>                             
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
+    </div>
+    
+    <div class="clearfix"></div> 
+
+    <div class="row">
+      <div class="col-md-6">
+         <div class="portlet box gray-dark">                
+            <div class="portlet-title">
+               <div class="caption captionNew">
+                   <i class="fa fa-calender"></i> Calendar                  
+               </div>          
+            </div>
+            <div class="portlet-body">
+               <div class="row">
+                 <div class="col-md-12">
+                    <div id='wrap'>
+                        <div class="row marginTop20">                  
+                           <div class="col-md-12">
+                             <div id='calendar'></div>
+                           </div>
+                        </div> 
+                    </div>
+                 </div>
+               </div>
+            </div>
+         </div>             
+      </div>
+
+      <div class="col-md-6">
+        <div class="portlet box blue-madison">                
+          <div class="portlet-title">
+             <div class="caption captionNew">
+                <i class="fa fa-calender"></i> Recent Activity                  
+             </div>          
+          </div>
+          <div class="portlet-body scmProgress1">           
+              <div class="row">
+                                <div class="col-md-12">                                    
+                                   <ul class="feeds">
+									    <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>                                   
+                                      
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                       <li>
+										    <div class="col1">
+											    <div class="cont">
+												    <div class="cont-col1">
+													    <div class="label label-sm label-info">
+														    <i class="fa fa-check"></i>
+													    </div>
+												    </div>
+												    <div class="cont-col2">
+													    <div class="desc">
+														     You have 4 pending tasks. 
+													    </div>
+												    </div>
+											    </div>
+										    </div>
+										    <div class="col2">
+											    <div class="date">
+												     Just now
+											    </div>
+										    </div>
+									    </li>
+                                    </ul>
+                                </div>							                                    														
+							</div>               
+           </div>
+        </div>  
+      </div>  
+    </div>
+
+
+    <script>
+       var userid = 0;
+        //$(document).ready(function () {
+        //    $(".div-n").mouseover(function () {
+        //        $(this).children().css('opacity', 1);                
+        //    });
+        //    $(".div-n").mouseout(function () {
+        //        $(this).children().css('opacity', 0.4);                
+        //    });
+        //});
+       $(document).ready(function () {
+
+           $(".flip").hover(function () {
+               $(this).find(".card").toggleClass("flipped");
+               return false;
+           });
+
+           $('#calendar').fullCalendar({
+               header: {
+                   left: 'prev,next today',
+                   center: 'title',
+                   right: 'month,agendaWeek,agendaDay'
+               },
+               defaultView: 'month',
+               editable: false,
+               slotDuration: '00:10:00',
+               droppable: false, // this allows things to be dropped onto the calendar
+               events: '{}',
+               dayRender: function (date, cell) {
+
+
+                   //if (moment(date).day() == 0) {
+                   //    cell.css("background-color", "red");
+                   //}
+
+               }
+           });
+            userid = user.LId;
+            GetAllTrainerData(userid);
+            GetAllTrainerTop5(userid);
+
+        });
+
+        function GetAllTrainerData(id) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "/api/TrainerStudentStatisticApi/selectById/" + id,
+                data: '{}',
+                dataType: "json",
+                success: function (data) {
+
+                    var obj = $.parseJSON(data);
+
+                    $("#tsc").html(obj.TSTotalStudent);
+                    $("#tbc").html(obj.TSBatchCount);
+                    $("#ttc").html(obj.TSTotalTest);
+
+                },
+                error: function (result) {
+                    Metronic.unblockUI();
+                    alert("Error " + result.status);
+                }
+            });
+        }
+
+        function GetAllTrainerTop5(id) {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: "/api/TrainerStudentStatisticApi/selecttop5ById/" + id,
+                data: '{}',
+                dataType: "json",
+                success: function (data) {
+                   
+                    var obj = $.parseJSON(data);
+                    alert(obj[0].TSStudentPhoto);
+                   var g1 = obj[0].TSStudentPhoto;
+                    $("#sname1").html(obj[0].TSStudentName);
+                    $("#sphoto1").prop('src','/UserData/StudentImages/'+obj[0].TSStudentPhoto);
+                    $("#sphoto2").prop('src', '/UserData/StudentImages/' + obj[0].TSStudentPhoto);
+                    $("#spercentage1").html(obj[0].TSStudentPercentage);
+
+                   
+
+                    $("#sname2").html(obj[1].TSStudentName);
+                    $("#sphoto3").prop('src', '/UserData/StudentImages/' + obj[1].TSStudentPhoto);
+                    $("#sphoto4").prop('src', '/UserData/StudentImages/' + obj[1].TSStudentPhoto);
+                    $("#spercentage2").html(obj[1].TSStudentPercentage);
+
+                    $("#sname3").html(obj[2].TSStudentName);
+                    $("#sphoto5").prop('src', '/UserData/StudentImages/' + obj[2].TSStudentPhoto);
+                    $("#sphoto6").prop('src', '/UserData/StudentImages/' + obj[2].TSStudentPhoto);
+                    $("#spercentage3").html(obj[2].TSStudentPercentage);
+
+                    $("#sname4").html(obj[3].TSStudentName);
+                    $("#sphoto7").prop('src', '/UserData/StudentImages/' + obj[3].TSStudentPhoto);
+                    $("#sphoto8").prop('src', '/UserData/StudentImages/' + obj[3].TSStudentPhoto);
+                    $("#spercentage4").html(obj[3].TSStudentPercentage);
+
+                    $("#sname5").html(obj[4].TSStudentName);
+                    $("#sphoto9").prop('src', '/UserData/StudentImages/' + obj[4].TSStudentPhoto);
+                    $("#sphoto10").prop('src', '/UserData/StudentImages/' + obj[4].TSStudentPhoto);
+                    $("#spercentage5").html(obj[4].TSStudentPercentage);
+
+
+
+                },
+                error: function (result) {
+                    Metronic.unblockUI();
+                    alert("Error " + result.status);
+                }
+            });
+        }
+
+    </script>
+
+  
+
+
+
+
+
+
+                 </div>
+                    <!-- END CONTENT -->
+                </div>
+
+
+            </div>
+        </div>
+        <!-- BEGIN FOOTER -->
+        <div class="page-footer" style="background:#364150">
+            <div class="page-footer-inner">
+                <span style="color:#fff">2015 &copy; Upskill</span> <a href="http://www.teastallstudio.com" target="_blank" style="color: #516279">Tea Stall Studio</a>
+            </div>
+            <div class="scroll-to-top">
+                <i class="icon-arrow-up"></i>
+            </div>
+        </div>
+        <!-- END FOOTER -->
+    
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="7FE0EC15" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="DO/cSCjMt6/zLjfZc+Z7KfGRVOi2cQQ7AAKHla4XX9GiZCoPctRXvo+hS4ftRq6DGx1RG/x2ulg47vOHmhE/m9eQJvtQbDL8JWqI/Eb2ungqumD1rgIW9HaZzbesmWQ46qVn+4xWpm6EsZJoPmurrW9wEolN8VtNy/MzI+3oXYk=" />
+</div></form>
+    <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
+    <!-- BEGIN CORE PLUGINS -->
+    <!--[if lt IE 9]>
+<script src="../../assets/global/plugins/respond.min.js"></script>
+<script src="../../assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+
+
+    <script src="/Assets/global/plugins/jquery-migrate.min.js" type="text/javascript"></script>
+    <!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+    <script src="/Assets/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+
+    <script src="/Assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/jquery.cokie.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+    <!-- END CORE PLUGINS -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+
+    
+    <script src="/Assets/global/plugins/flot/jquery.flot.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/flot/jquery.flot.resize.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/flot/jquery.flot.categories.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/jquery.pulsate.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/bootstrap-daterangepicker/moment.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js" type="text/javascript"></script>
+    <!-- IMPORTANT! fullcalendar depends on jquery-ui.min.js for drag & drop support -->
+    
+    <script src="/Assets/global/plugins/jquery-easypiechart/jquery.easypiechart.min.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/jquery.sparkline.min.js" type="text/javascript"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/Assets/global/scripts/metronic.js" type="text/javascript"></script>
+    <script src="/Assets/admin/layout/scripts/layout.js" type="text/javascript"></script>
+    <script src="/Assets/admin/layout/scripts/quick-sidebar.js" type="text/javascript"></script>
+    <script src="/Assets/admin/layout/scripts/demo.js" type="text/javascript"></script>
+    <script src="/Assets/admin/pages/scripts/components-dropdowns.js"></script>
+    <script src="/Assets/admin/pages/scripts/index.js" type="text/javascript"></script>
+    <script src="/Assets/admin/pages/scripts/tasks.js" type="text/javascript"></script>
+    <script src="/Assets/admin/pages/scripts/table-editable.js"></script>
+    <script src="/Assets/admin/pages/scripts/table-managed.js"></script>
+    <script src="/Assets/global/plugins/bootstrap-toastr/toastr.min.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script src="/Assets/admin/pages/scripts/ui-toastr.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script src="/Assets/DeveloperJS/Pagination.js"></script>
+    <script src="/Assets/DeveloperJS/DeveloperMethods.js"></script>
+
+
+    <script src="/Assets/global/scripts/FormValidations.js" type="text/javascript"></script>
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+
+    <script type="text/javascript" src="/Assets/global/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <script src="/Assets/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js" type="text/javascript"></script>
+    <script src="/Assets/admin/pages/scripts/ui-confirmations.js"></script>
+    <script src="/Assets/admin/pages/scripts/ui-blockui.js"></script>
+
+    <script type="text/javascript" src="/Assets/global/plugins/jquery.mockjax.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js"></script>
+    <script src="/Assets/admin/pages/scripts/form-editable.js"></script>
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+
+    <!-- Form Validations -->
+    <script type="text/javascript" src="/Assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/jquery-validation/js/additional-methods.min.js"></script>
+
+
+    <script type="text/javascript" src="/Assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js"></script>
+
+    <script type="text/javascript" src="/Assets/global/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/bootstrap-markdown/lib/markdown.js"></script>
+
+
+
+    <script src="/Assets/DeveloperJS/Validations.js"></script>
+
+
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script type="text/javascript" src="/Assets/global/plugins/gritter/js/jquery.gritter.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/jquery.pulsate.min.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/jquery-bootpag/jquery.bootpag.min.js"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/Assets/scripts/app.js"></script>
+    <script src="/Assets/admin/pages/scripts/ui-general.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script type="text/javascript" src="/Assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/Assets/admin/pages/scripts/components-pickers.js"></script>
+
+    <script src="/Assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/select2/select2.min.js"></script>
+    <script type="text/javascript" src="/Assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js"></script>
+    <script src="/Assets/admin/layout/scripts/quick-sidebar.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/amcharts/ammap/ammap_amcharts_extension.js" type="text/javascript"></script>
+     <script src="/Assets/DeveloperJS/ammap.js"></script>
+
+    <script src="/Assets/DeveloperJS/indiaLow.js"></script>
+   
+    
+   <script src="/Assets/global/plugins/amcharts/amcharts/amcharts.js" type="text/javascript"></script>
+   <script src="/Assets/global/plugins/amcharts/amcharts/serial.js" type="text/javascript"></script>
+     <script src="/Assets/global/plugins/Stock/amcharts.js"></script>
+    <script src="/Assets/global/plugins/Stock/serial.js"></script>
+     <script src="/Assets/global/plugins/Stock/amstock.js"></script>
+     
+     
+    <script src="/Assets/global/plugins/amcharts/amcharts/pie.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/amcharts/amcharts/radar.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/amcharts/amcharts/themes/light.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/amcharts/amcharts/themes/patterns.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/amcharts/amcharts/themes/chalk.js" type="text/javascript"></script>
+    <script src="/Assets/global/plugins/amcharts/ammap/maps/js/worldLow.js" type="text/javascript"></script>
+  
+    <script src="/Assets/admin/pages/scripts/charts-amcharts.js"></script>
+   
+    <script>
+     
+        jQuery(document).ready(function () {
+
+            Metronic.init(); // init metronic core componets
+            Layout.init(); // init layout
+            QuickSidebar.init(); // init quick sidebar
+
+            Demo.init(); // init demo features
+
+            ComponentsPickers.init();
+            Index.initMiniCharts();
+            ComponentsDropdowns.init();
+
+            FormEditable.init();
+            Index.init();
+            Index.initDashboardDaterange();
+            Index.initJQVMAP(); // init index page's custom scripts
+            //Index.initCalendar(); // init index page's custom scripts
+            Index.initCharts(); // init index page's custom scripts
+            Index.initChat();
+            Tasks.initDashboardWidget();
+            TableEditable.init();
+            TableManaged.init();
+            UIConfirmations.init();
+            UIBlockUI.init();
+            UIToastr.init();
+            FormValidation.init();
+            App.init();
+            UIGeneral.init();
+
+           
+        });
+    </script>
+    <!-- END JAVASCRIPTS -->
+
+<!-- Visual Studio Browser Link -->
+<script type="application/json" id="__browserLink_initializationData">
+    {"appName":"Chrome","requestId":"530d24afca774455bd2b6f9a59564778"}
+</script>
+<script type="text/javascript" src="http://localhost:51518/779583460e77463eb7356bfb0e67eb83/browserLink" async="async"></script>
+<!-- End Browser Link -->
+
+</body>
+</html>

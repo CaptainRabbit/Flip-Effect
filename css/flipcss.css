@@ -1,0 +1,180 @@
+/*flip css*/
+
+.y-theme-icon-wrapper{
+	width: 150px;
+	height: 150px;	
+    margin:80px auto 80px;
+    
+}
+.y-theme-icon {
+	display: block;
+	width: 150px;
+	height: 150px;
+	/*background:rgba(241, 241, 241, 0.71);
+	background: @color-1;*/
+	/*border-radius: 70px;
+	-webkit-border-radius: 70px; 
+	-moz-border-radius: 70px;
+	-o-border-radius: 70px;*/
+	text-align:center;
+	/*border-radius:50% !important;*/
+	padding:10px;
+	/*margin:5%;*/
+    border: 1px solid rgba(109, 104, 104, 0.71);
+    transform: rotate(45deg);
+    
+}
+.y-theme-icon img{
+	width: 120px;
+	height: 120px;
+	margin-left: auto;
+    margin-right: auto;
+	border-radius:50% !important;
+	margin-top:0px;
+   -webkit-transform: rotate(300deg);
+
+}
+.flip .card .back{	
+	/*background-color: rgba(255, 220, 32, 1);*/
+    background:#ffffff;
+    width: 100%;
+    height: 150px;
+    border-radius:4px !important;
+}
+.flip {
+	-webkit-perspective: 800;
+	-ms-perspective: 800;
+	-moz-perspective: 800;
+	-o-perspective: 800;
+	position: relative;
+	/*margin: 12px auto;*/
+	height: 185px;
+	z-index: 1;
+	position: relative;
+     border-radius:4px !important;
+}
+.flip .card.flipped {
+  transform:rotatey(-180deg);
+  -ms-transform:rotatey(-180deg); 
+  -moz-transform:rotatey(-180deg); 
+  -webkit-transform:rotatey(-180deg); 
+  -o-transform:rotatey(-180deg); 
+}
+.flip .card {
+	-webkit-transform-style: preserve-3d;
+	-webkit-transition: 0.5s;
+	-moz-transform-style: preserve-3d;
+	-moz-transition: 0.5s;
+	-ms-transform-style: preserve-3d;
+	-ms-transition: 0.5s;
+	-o-transform-style: preserve-3d;
+	-o-transition: 0.5s;
+	transform-style: preserve-3d;
+	transition: 0.5s;
+}
+.flip .card .face {
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  backface-visibility: hidden;  /* W3C */
+  -webkit-backface-visibility: hidden; /* Safari & Chrome */
+  -moz-backface-visibility: hidden; /* Firefox */
+  -ms-backface-visibility: hidden; /* Internet Explorer */
+  -o-backface-visibility: hidden; /* Opera */
+}
+.flip .card .front {
+	position: absolute;
+	z-index: 1;
+	cursor: pointer;
+}
+.flip .card .back {
+	color: black;
+	cursor: pointer;
+	transform:rotatey(-180deg);
+	-ms-transform:rotatey(-180deg); 
+	-moz-transform:rotatey(-180deg); 
+	-webkit-transform:rotatey(-180deg); 
+	-o-transform:rotatey(-180deg); 
+}
+
+/* Postcard */
+.postcard-flip {
+	/*-webkit-perspective: 800;
+	-ms-perspective: 800;
+	-moz-perspective: 800;
+	-o-perspective: 800;
+	position: relative;
+	height: 150px;
+	z-index: 1;
+	position: relative;*/
+}
+.postcard-flip .card.flipped {
+  /*transform:rotatey(-180deg);
+  -ms-transform:rotatey(-180deg); 
+  -moz-transform:rotatey(-180deg); 
+  -webkit-transform:rotatey(-180deg); 
+  -o-transform:rotatey(-180deg);*/
+}
+.postcard-flip .card {
+	/*-webkit-transform-style: preserve-3d;
+	-webkit-transition: 0.5s;
+	-moz-transform-style: preserve-3d;
+	-moz-transition: 0.5s;
+	-ms-transform-style: preserve-3d;
+	-ms-transition: 0.5s;
+	-o-transform-style: preserve-3d;
+	-o-transition: 0.5s;
+	transform-style: preserve-3d;
+	transition: 0.5s;*/
+}
+.postcard-flip .card .face {
+  /*position: absolute;
+  z-index: 2;
+  text-align: center;
+  backface-visibility: hidden; 
+  -webkit-backface-visibility: hidden; 
+  -moz-backface-visibility: hidden; 
+  -ms-backface-visibility: hidden; 
+  -o-backface-visibility: hidden;*/
+}
+.postcard-flip .card .front {
+	/*position: absolute;
+	z-index: 1;
+	cursor: pointer;*/
+}
+.postcard-flip .card .back {
+	/*color: black;
+	cursor: pointer;
+	transform:rotatey(-180deg);
+	-ms-transform:rotatey(-180deg); 
+	-moz-transform:rotatey(-180deg); 
+	-webkit-transform:rotatey(-180deg); 
+	-o-transform:rotatey(-180deg);*/ 
+}
+.flip-backFace{
+    width:50px;
+    height:50px;
+    border-radius:50% !important;
+    margin-top:20px;
+    margin-bottom:10px;
+}
+.mainDiv-n{
+    /*background:#626b7a !important;*/
+    background:#272d35  !important;
+    padding-top:30px !important;
+    padding-bottom:40px !important;
+    border-radius: 4px !important;
+}
+.div-n{
+    width: 100%;
+    /*height: 160px;*/
+    /*border:1px solid rgba(187, 177, 173, 0.28);*/
+    margin: 0px auto;
+    /*background: rgba(187, 177, 173, 0.28);*/    
+    position:relative;
+    /*-webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);*/
+}
